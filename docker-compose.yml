@@ -1,0 +1,39 @@
+services:
+  addition-service:
+    build:
+      context: .
+      dockerfile: additionservice/Dockerfile
+    depends_on: 
+      - gateway-service
+      - database-service
+    deploy:
+      replicas: 2
+  
+  subtraction-service:
+    build:
+      context: .
+      dockerfile: Subtractionservice/Dockerfile
+    depends_on: 
+      - gateway-service
+      - database-service
+    deploy:
+      replicas: 2
+  
+  gateway-service:
+    build:
+      context: .
+      dockerfile: gatewayservice/Dockerfile
+    depends_on:
+      - database-service
+
+  database-service:
+    build: 
+      context: .
+      dockerfile: databaseservice/Dockerfile
+  
+  client-service:
+    build:
+      context: .
+      dockerfile: Client/Dockerfile
+    depends_on:
+      - gateway-service
