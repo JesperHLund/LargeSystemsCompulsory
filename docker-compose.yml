@@ -7,7 +7,7 @@ services:
       - gateway-service
       - database-service
     deploy:
-      replicas: 2
+      replicas: 3
   
   subtraction-service:
     build:
@@ -17,7 +17,7 @@ services:
       - gateway-service
       - database-service
     deploy:
-      replicas: 2
+      replicas: 3
   
   gateway-service:
     build:
@@ -25,11 +25,15 @@ services:
       dockerfile: gatewayservice/Dockerfile
     depends_on:
       - database-service
+    deploy:
+      replicas: 3
 
   database-service:
     build: 
       context: .
       dockerfile: databaseservice/Dockerfile
+    deploy:
+      replicas: 3
   
   client-service:
     build:
@@ -37,3 +41,5 @@ services:
       dockerfile: Client/Dockerfile
     depends_on:
       - gateway-service
+    deploy:
+      replicas: 3
