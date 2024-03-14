@@ -12,7 +12,7 @@ services:
   subtraction-service:
     build:
       context: .
-      dockerfile: Subtractionservice/Dockerfile
+      dockerfile: SubtractionService/Dockerfile
     depends_on: 
       - gateway-service
       - database-service
