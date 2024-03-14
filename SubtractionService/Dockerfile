@@ -11,7 +11,7 @@ COPY package*.json ./
 RUN npm install
 
 # Copy the rest of the application code
-COPY . .
+COPY ./SubtractionService/ . 
 
 # Expose the port your app runs on
 EXPOSE 3002
