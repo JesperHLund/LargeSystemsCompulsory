@@ -1,6 +1,0 @@
-version: "3"
-services:
-  databaseservice:
-    build:
-      context: ../
-      dockerfile: databaseservice/Dockerfile

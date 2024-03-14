@@ -7,18 +7,14 @@ const PORT = 3001;
 app.use(cors());
 app.use(express.json());
 
-const add = async (numberOne, numberTwo) => {
-    return numberOne + numberTwo;
-}
-
 app.post("/forward", async (req, res) => {
     const { param, ...rest } = req.body;
 
     let url;
     if (param === 'add') {
-        url = 'http://localhost:3003/add';
+        url = 'http://add-service:3003/add';
     } else if (param === 'subtract') {
-        url = 'http://localhost:3002/subtract';
+        url = 'http://subtract-service:3002/subtract';
     } else {
         res.status(400).send({ error: 'Invalid parameter' });
         return;
@@ -26,7 +22,7 @@ app.post("/forward", async (req, res) => {
 
     try {
         const response = await axios.post(url, rest);
-        res.send(response.data);
+        res.send(response.data.result);
     } catch (error) {
         res.status(500).send({ error: 'Error forwarding request' });
     }
