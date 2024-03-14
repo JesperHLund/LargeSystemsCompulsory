@@ -3,19 +3,15 @@ services:
     build:
       context: .
       dockerfile: additionservice/Dockerfile
-    depends_on: 
-      - gateway-service
-      - database-service
+    image: addition-service
     deploy:
       replicas: 3
   
   subtraction-service:
     build:
       context: .
-      dockerfile: SubtractionService/Dockerfile
-    depends_on: 
-      - gateway-service
-      - database-service
+      dockerfile: subtractionservice/Dockerfile
+    image: subtraction-service
     deploy:
       replicas: 3
   
@@ -23,8 +19,7 @@ services:
     build:
       context: .
       dockerfile: gatewayservice/Dockerfile
-    depends_on:
-      - database-service
+    image: gateway-service
     deploy:
       replicas: 3
 
@@ -32,6 +27,7 @@ services:
     build: 
       context: .
       dockerfile: databaseservice/Dockerfile
+    image: database-service
     deploy:
       replicas: 3
   
@@ -39,7 +35,6 @@ services:
     build:
       context: .
       dockerfile: Client/Dockerfile
-    depends_on:
-      - gateway-service
+    image: client-service
     deploy:
       replicas: 3
