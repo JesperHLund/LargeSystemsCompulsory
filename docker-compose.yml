@@ -1,4 +1,5 @@
 services:
+#this service is used to add two numbers
   addition-service:
     build:
       context: .
@@ -10,7 +11,8 @@ services:
       - calculator-network
     deploy:
       replicas: 3
-  
+
+#this service is used to subtract two numbers
   subtraction-service:
     build:
       context: .
@@ -22,7 +24,8 @@ services:
       - calculator-network
     deploy:
       replicas: 3
-  
+ 
+#this service is used to route requests to the other services
   gateway-service:
     build:
       context: .
@@ -35,6 +38,7 @@ services:
     deploy:
       replicas: 3
 
+#this service is used to store the results of the calculations
   database-service:
     build: 
       context: .
@@ -46,7 +50,8 @@ services:
       - calculator-network 
     deploy:
       replicas: 3
-  
+
+#client-service is a react app that uses the gateway-service to make requests to the other services
   client-service:
     build:
       context: ./Client
@@ -59,6 +64,7 @@ services:
     deploy:
       replicas: 3
 
+#Jaeger is a distributed tracing system
   jaeger:
     image: jaegertracing/all-in-one:1.55
     ports:
@@ -73,5 +79,43 @@ services:
       - "14269:14269"
       - "9411:9411"
 
+#Database instance
+#this is the database that the services use to store the results of the calculations
+#it will flood the project folder with a lot of files, as it stores the data in the project folder
+#this is done to allow the data to persist between container runs
+#this is not a good practice, but it's done to simplify the project
+  db:
+    image: mysql
+    container_name: my-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: largesystemscompulsory
+    networks:
+      - calculator-network
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+  
+# Adminer is a tool for managing content in MySQL databases
+#it's just here to setup the database
+  adminer:
+    image: adminer
+    container_name: my-adminer
+    networks:
+      - calculator-network
+    ports:
+        - "8080:8080"
+    depends_on:
+         db:
+          condition: service_healthy
+
+#networks are used to connect the services
 networks:
+#this is the network that all the services are connected to
   calculator-network:
