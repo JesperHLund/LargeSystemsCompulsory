@@ -3,6 +3,7 @@ const { NodeTracerProvider } = require('@opentelemetry/node');
 const { SimpleSpanProcessor } = require('@opentelemetry/tracing');
 const { ConsoleSpanExporter } = require('@opentelemetry/tracing');
 const winston = require('winston'); const express = require("express");
+const os = require('os');
 const axios = require("axios");
 const app = express();
 const cors = require("cors");

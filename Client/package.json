@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@opentelemetry/api": "^1.8.0",
+    "@opentelemetry/exporter-jaeger": "^1.22.0",
     "@opentelemetry/node": "^0.24.0",
     "@opentelemetry/tracing": "^0.24.0",
     "@testing-library/jest-dom": "^5.17.0",
