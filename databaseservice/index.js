@@ -40,67 +40,68 @@ const getContainerInfo = async () => {
         containerName: containerInfo.Name,
     };
 
-const db = mysql.createConnection({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
-})
+    const db = mysql.createConnection({
+        user: process.env.DB_USER,
+        host: process.env.DB_HOST,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME
+    })
 
-app.post("/add", async (req, res) => {
-    const { numberOne, numberTwo, result } = req.body;
+    app.post("/add", async (req, res) => {
+        const { numberOne, numberTwo, result } = req.body;
 
-    const containerInfo = await getContainerInfo();
+        const containerInfo = await getContainerInfo();
 
-    const span = tracer.startSpan('save to database');
-    logger.info('handling save to database', {
-        reqBody: req.body,
-        containerId: containerInfo.containerId,
-        containerName: containerInfo.containerName,
-        pid: process.pid,
-    });
-    
+        const span = tracer.startSpan('save to database');
+        logger.info('handling save to database', {
+            reqBody: req.body,
+            containerId: containerInfo.containerId,
+            containerName: containerInfo.containerName,
+            pid: process.pid,
+        });
 
-    const sql = "INSERT INTO add_history (number_one, number_two, result) VALUES (?, ?, ?)";
-    db.query(sql, [numberOne, numberTwo, result], (err, dbResult) => {
-        if (err) {
-            console.error(err);
-            logger.error('error saving to database', error);
-            span.setStatus({ code: trace.SpanStatusCode.ERROR, message: error.message });
-            res.status(500).send({ error: 'Error saving to database' });
-        } else {
-            res.send({ result });
-        }
-    });
 
-    span.end();
-});
+        const sql = "INSERT INTO add_history (number_one, number_two, result) VALUES (?, ?, ?)";
+        db.query(sql, [numberOne, numberTwo, result], (err, dbResult) => {
+            if (err) {
+                console.error(err);
+                logger.error('error saving to database', error);
+                span.setStatus({ code: trace.SpanStatusCode.ERROR, message: error.message });
+                res.status(500).send({ error: 'Error saving to database' });
+            } else {
+                res.send({ result });
+            }
+        });
 
-app.post("/subtract", async (req, res) => {
-    const { numberOne, numberTwo, result } = req.body;
-
-    const containerInfo = await getContainerInfo();
-
-    const span = tracer.startSpan('save to database');
-    logger.info('handling save to database', {
-        reqBody: req.body,
-        containerId: containerInfo.containerId,
-        containerName: containerInfo.containerName,
-        pid: process.pid,
+        span.end();
     });
 
-    const sql = "INSERT INTO subtract_history (number_one, number_two, result) VALUES (?, ?, ?)";
-    db.query(sql, [numberOne, numberTwo, result], (err, dbRresult) => {
-        if (err) {
-            console.error(err);
-            res.status(500).send({ error: 'Error saving to database' });
-        } else {
-            res.send({ result });
-        }
-    });
+    app.post("/subtract", async (req, res) => {
+        const { numberOne, numberTwo, result } = req.body;
 
-    span.end();
-});
+        const containerInfo = await getContainerInfo();
+
+        const span = tracer.startSpan('save to database');
+        logger.info('handling save to database', {
+            reqBody: req.body,
+            containerId: containerInfo.containerId,
+            containerName: containerInfo.containerName,
+            pid: process.pid,
+        });
+
+        const sql = "INSERT INTO subtract_history (number_one, number_two, result) VALUES (?, ?, ?)";
+        db.query(sql, [numberOne, numberTwo, result], (err, dbRresult) => {
+            if (err) {
+                console.error(err);
+                res.status(500).send({ error: 'Error saving to database' });
+            } else {
+                res.send({ result });
+            }
+        });
+
+        span.end();
+    });
+}
 
 app.listen(PORT, () => {
     console.log(`Database service is running on port ${PORT}`);
