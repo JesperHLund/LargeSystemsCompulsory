@@ -4,13 +4,11 @@ const { SimpleSpanProcessor } = require('@opentelemetry/tracing');
 const { ConsoleSpanExporter } = require('@opentelemetry/tracing');
 const winston = require('winston'); const express = require("express");
 const { JaegerExporter } = require('@opentelemetry/exporter-jaeger');
-const os = require('os');
 const axios = require("axios");
 const app = express();
 const cors = require("cors");
 const mysql = require("mysql");
 const PORT = 3004;
-
 require('dotenv').config();
 app.use(cors());
 app.use(express.json());
@@ -35,6 +33,13 @@ provider.register();
 provider.addSpanProcessor(new SimpleSpanProcessor(jaegerExporter));
 const tracer = trace.getTracer('database-service');
 
+const getContainerInfo = async () => {
+    const containerInfo = await docker.getContainer(process.env.HOSTNAME).inspect();
+    return {
+        containerId: containerInfo.Id,
+        containerName: containerInfo.Name,
+    };
+
 const db = mysql.createConnection({
     user: process.env.DB_USER,
     host: process.env.DB_HOST,
@@ -45,10 +50,13 @@ const db = mysql.createConnection({
 app.post("/add", async (req, res) => {
     const { numberOne, numberTwo, result } = req.body;
 
+    const containerInfo = await getContainerInfo();
+
     const span = tracer.startSpan('save to database');
     logger.info('handling save to database', {
         reqBody: req.body,
-        hostname: os.hostname(),
+        containerId: containerInfo.containerId,
+        containerName: containerInfo.containerName,
         pid: process.pid,
     });
     
@@ -71,10 +79,13 @@ app.post("/add", async (req, res) => {
 app.post("/subtract", async (req, res) => {
     const { numberOne, numberTwo, result } = req.body;
 
+    const containerInfo = await getContainerInfo();
+
     const span = tracer.startSpan('save to database');
     logger.info('handling save to database', {
         reqBody: req.body,
-        hostname: os.hostname(),
+        containerId: containerInfo.containerId,
+        containerName: containerInfo.containerName,
         pid: process.pid,
     });
 

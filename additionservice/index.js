@@ -3,7 +3,6 @@ const { NodeTracerProvider } = require('@opentelemetry/node');
 const { SimpleSpanProcessor } = require('@opentelemetry/tracing');
 const { ConsoleSpanExporter } = require('@opentelemetry/tracing');
 const { JaegerExporter } = require('@opentelemetry/exporter-jaeger');
-const os = require('os');
 const winston = require('winston');
 const express = require("express");
 const axios = require("axios");
@@ -35,6 +34,13 @@ provider.register();
 provider.addSpanProcessor(new SimpleSpanProcessor(jaegerExporter));
 const tracer = trace.getTracer('addition-service');
 
+const getContainerInfo = async () => {
+    const containerInfo = await docker.getContainer(process.env.HOSTNAME).inspect();
+    return {
+        containerId: containerInfo.Id,
+        containerName: containerInfo.Name,
+    };
+};
 
 const add = (numberOne, numberTwo) => {
   return numberOne + numberTwo;
@@ -43,11 +49,13 @@ const add = (numberOne, numberTwo) => {
 app.post("/add", async (req, res) => {
     const { numberOne, numberTwo } = req.body;
 
-    const span = tracer.startSpan('do addition');
+    const containerInfo = await getContainerInfo();
 
+    const span = tracer.startSpan('do addition');
     logger.info('Doing addition', {
         reqBody: req.body,
-        hostname: os.hostname(),
+        containerId: containerInfo.containerId,
+        containerName: containerInfo.containerName,
         pid: process.pid,
     });
     try {

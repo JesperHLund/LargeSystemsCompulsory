@@ -4,7 +4,6 @@ const { SimpleSpanProcessor } = require('@opentelemetry/tracing');
 const { ConsoleSpanExporter } = require('@opentelemetry/tracing');
 const winston = require('winston'); const express = require("express");
 const { JaegerExporter } = require('@opentelemetry/exporter-jaeger');
-const os = require('os');
 const axios = require("axios");
 const app = express();
 const cors = require("cors");
@@ -33,12 +32,25 @@ provider.register();
 provider.addSpanProcessor(new SimpleSpanProcessor(jaegerExporter));
 const tracer = trace.getTracer('gateway-service');
 
+const getContainerInfo = async () => {
+    const containerInfo = await docker.getContainer(process.env.HOSTNAME).inspect();
+    return {
+        containerId: containerInfo.Id,
+        containerName: containerInfo.Name,
+    };
+};
+
 app.post("/forward", async (req, res) => {
+
     const { param, ...rest } = req.body;
+
+    const containerInfo = await getContainerInfo();
+
     const span = tracer.startSpan('forward request');
     logger.info('handling forward request', {
         reqBody: req.body,
-        hostname: os.hostname(),
+        containerId: containerInfo.containerId,
+        containerName: containerInfo.containerName,
         pid: process.pid,
     });
 
