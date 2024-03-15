@@ -50,7 +50,7 @@ app.post("/add", async (req, res) => {
         hostname: os.hostname(),
         pid: process.pid,
     });
-
+    try {
   if (numberOne && numberTwo) {
     const result = add(numberOne, numberTwo);
     res.send({ result });
@@ -66,9 +66,14 @@ app.post("/add", async (req, res) => {
   } else {
     // If the request is missing required parameters, return a 400 status code
     res.send(req.body);
+        }
+    } catch (error) {
+        logger.error('Error doing addition', error);
+        span.setStatus({ code: trace.SpanStatusCode.ERROR, message: error.message });
+        res.status(500).send({ error: error.message });
+    }finally{
+        span.end();
     }
-
-  span.end();
 });
 
 app.listen(PORT, () => {

@@ -2,18 +2,18 @@ import { useState } from "react";
 import "./App.css";
 
 export default function App() {
-    const { trace } = require('@opentelemetry/api');
-    const { NodeTracerProvider } = require('@opentelemetry/node');
-    const { SimpleSpanProcessor } = require('@opentelemetry/tracing');
-    const { ConsoleSpanExporter } = require('@opentelemetry/tracing');
-    const { JaegerExporter } = require('@opentelemetry/exporter-jaeger');
-    const os = require('os');
-    const winston = require('winston');
+  const { trace } = require('@opentelemetry/api');
+  const { NodeTracerProvider } = require('@opentelemetry/node');
+  const { SimpleSpanProcessor } = require('@opentelemetry/tracing');
+  const { ConsoleSpanExporter } = require('@opentelemetry/tracing');
+  const { JaegerExporter } = require('@opentelemetry/exporter-jaeger');
+  const os = require('os');
+  const winston = require('winston');
   const [numberOne, setNumberOne] = useState();
   const [numberTwo, setNumberTwo] = useState();
   const [operation, setOperation] = useState("");
   const [result, setResult] = useState("");
-    const host = "http://localhost:3001";
+  const host = "http://localhost:3001";
 
     const logger = winston.createLogger({
         level: 'info',
@@ -60,7 +60,9 @@ export default function App() {
           setResult(data.result);
         });
     } catch (error) {
-      console.error(error);
+        console.error(error);
+        logger.error('error handling request', error);
+        span.setStatus({ code: trace.SpanStatusCode.ERROR, message: error.message });
         }
 
         span.end();

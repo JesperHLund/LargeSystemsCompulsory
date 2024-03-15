@@ -49,11 +49,14 @@ app.post("/add", async (req, res) => {
         hostname: os.hostname(),
         pid: process.pid,
     });
+    
 
     const sql = "INSERT INTO add_history (number_one, number_two, result) VALUES (?, ?, ?)";
     db.query(sql, [numberOne, numberTwo, result], (err, dbResult) => {
         if (err) {
             console.error(err);
+            logger.error('error saving to database', error);
+            span.setStatus({ code: trace.SpanStatusCode.ERROR, message: error.message });
             res.status(500).send({ error: 'Error saving to database' });
         } else {
             res.send({ result });

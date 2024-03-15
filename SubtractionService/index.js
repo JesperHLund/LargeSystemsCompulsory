@@ -43,6 +43,8 @@ app.post("/subtract", async (req, res) => {
         hostname: os.hostname(),
         pid: process.pid,
     });
+
+    try {
   if (numberOne && numberTwo) {
     const result = await subtract(numberOne, numberTwo);
     res.send({ result });
@@ -59,8 +61,15 @@ app.post("/subtract", async (req, res) => {
   } else {
     // If the request is missing required parameters, return a 400 status code
     res.send(req.body);
+        }
+    } catch (error) {
+        logger.error('error handling request', error);
+        span.setStatus({ code: trace.SpanStatusCode.ERROR, message: error.message });
+        res.status(500).send({ error: error.message });
     }
-    span.end();
+    finally {
+        span.end();
+    }
 });
 
 app.listen(PORT, () => {

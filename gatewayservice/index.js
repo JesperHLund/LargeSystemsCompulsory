@@ -56,7 +56,8 @@ app.post("/forward", async (req, res) => {
         console.log("Response in gateway service:", response.data.result)
         res.send({result: response.data.result});
     } catch (error) {
-        
+        logger.error('error handling request', error);
+        span.setStatus({ code: trace.SpanStatusCode.ERROR, message: error.message });
         res.status(500).send({ error: error.message});
     }
     span.end();
