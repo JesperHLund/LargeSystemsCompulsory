@@ -4,6 +4,8 @@ services:
       context: .
       dockerfile: additionservice/Dockerfile
     image: addition-service
+    ports:
+    - "3003:3003"
     deploy:
       replicas: 3
   
@@ -12,6 +14,8 @@ services:
       context: .
       dockerfile: subtractionservice/Dockerfile
     image: subtraction-service
+    ports:
+    - "3002:3002"
     deploy:
       replicas: 3
   
@@ -20,6 +24,8 @@ services:
       context: .
       dockerfile: gatewayservice/Dockerfile
     image: gateway-service
+    ports:
+    - "3001:3001"
     deploy:
       replicas: 3
 
@@ -28,6 +34,8 @@ services:
       context: .
       dockerfile: databaseservice/Dockerfile
     image: database-service
+    ports:
+    - "3004:3004"
     deploy:
       replicas: 3
   
@@ -36,5 +44,7 @@ services:
       context: ./Client
       dockerfile: Dockerfile
     image: client-service
+    ports:
+    - "3000:3000"
     deploy:
       replicas: 3

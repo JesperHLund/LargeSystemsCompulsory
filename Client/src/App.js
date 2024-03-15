@@ -10,7 +10,7 @@ export default function App() {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch(`${host}/${operation}`, {
+      const response = await fetch(`${host}/forward`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
