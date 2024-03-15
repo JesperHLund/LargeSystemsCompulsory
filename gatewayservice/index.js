@@ -27,7 +27,7 @@ app.post("/forward", async (req, res) => {
         res.send({result: response.data.result});
     } catch (error) {
         
-        res.status(500).send({ error: "Wagwan brudda, something went wrong!"});
+        res.status(500).send({ error: error.message});
     }
 }); 
 
