@@ -55,9 +55,7 @@ app.post("/forward", async (req, res) => {
     }
 
     try {
-        console.log("Rest in gateway service:", rest);
         const response = await axios.post(url, rest);
-        console.log("Response in gateway service:", response.data.result)
         res.send({result: response.data.result});
     } catch (error) {
         logger.error('error handling request', error);
