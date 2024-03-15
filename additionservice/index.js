@@ -34,13 +34,6 @@ provider.register();
 provider.addSpanProcessor(new SimpleSpanProcessor(jaegerExporter));
 const tracer = trace.getTracer('addition-service');
 
-const getContainerInfo = async () => {
-    const containerInfo = await docker.getContainer(process.env.HOSTNAME).inspect();
-    return {
-        containerId: containerInfo.Id,
-        containerName: containerInfo.Name,
-    };
-};
 
 const add = (numberOne, numberTwo) => {
   return numberOne + numberTwo;
@@ -49,13 +42,10 @@ const add = (numberOne, numberTwo) => {
 app.post("/add", async (req, res) => {
     const { numberOne, numberTwo } = req.body;
 
-    const containerInfo = await getContainerInfo();
 
     const span = tracer.startSpan('do addition');
     logger.info('Doing addition', {
         reqBody: req.body,
-        containerId: containerInfo.containerId,
-        containerName: containerInfo.containerName,
         pid: process.pid,
     });
     try {

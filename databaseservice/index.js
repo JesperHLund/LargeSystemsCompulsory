@@ -9,6 +9,7 @@ const app = express();
 const cors = require("cors");
 const mysql = require("mysql");
 const PORT = 3004;
+
 require('dotenv').config();
 app.use(cors());
 app.use(express.json());
@@ -33,12 +34,6 @@ provider.register();
 provider.addSpanProcessor(new SimpleSpanProcessor(jaegerExporter));
 const tracer = trace.getTracer('database-service');
 
-const getContainerInfo = async () => {
-    const containerInfo = await docker.getContainer(process.env.HOSTNAME).inspect();
-    return {
-        containerId: containerInfo.Id,
-        containerName: containerInfo.Name,
-    };
 
     const db = mysql.createConnection({
         user: process.env.DB_USER,
@@ -50,13 +45,9 @@ const getContainerInfo = async () => {
     app.post("/add", async (req, res) => {
         const { numberOne, numberTwo, result } = req.body;
 
-        const containerInfo = await getContainerInfo();
-
         const span = tracer.startSpan('save to database');
         logger.info('handling save to database', {
             reqBody: req.body,
-            containerId: containerInfo.containerId,
-            containerName: containerInfo.containerName,
             pid: process.pid,
         });
 
@@ -79,13 +70,9 @@ const getContainerInfo = async () => {
     app.post("/subtract", async (req, res) => {
         const { numberOne, numberTwo, result } = req.body;
 
-        const containerInfo = await getContainerInfo();
-
         const span = tracer.startSpan('save to database');
         logger.info('handling save to database', {
             reqBody: req.body,
-            containerId: containerInfo.containerId,
-            containerName: containerInfo.containerName,
             pid: process.pid,
         });
 
@@ -101,7 +88,6 @@ const getContainerInfo = async () => {
 
         span.end();
     });
-}
 
 app.listen(PORT, () => {
     console.log(`Database service is running on port ${PORT}`);

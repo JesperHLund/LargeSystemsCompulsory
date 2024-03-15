@@ -32,25 +32,15 @@ provider.register();
 provider.addSpanProcessor(new SimpleSpanProcessor(jaegerExporter));
 const tracer = trace.getTracer('gateway-service');
 
-const getContainerInfo = async () => {
-    const containerInfo = await docker.getContainer(process.env.HOSTNAME).inspect();
-    return {
-        containerId: containerInfo.Id,
-        containerName: containerInfo.Name,
-    };
-};
 
 app.post("/forward", async (req, res) => {
 
     const { param, ...rest } = req.body;
 
-    const containerInfo = await getContainerInfo();
 
     const span = tracer.startSpan('forward request');
     logger.info('handling forward request', {
         reqBody: req.body,
-        containerId: containerInfo.containerId,
-        containerName: containerInfo.containerName,
         pid: process.pid,
     });
 

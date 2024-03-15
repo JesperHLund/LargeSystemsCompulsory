@@ -13,8 +13,6 @@ export default function App() {
   const [operation, setOperation] = useState("");
   const [result, setResult] = useState("");
     const host = "http://localhost:3001";
-    const Docker = require('dockerode');
-    const docker = new Docker({ socketPath: '/var/run/docker.sock' });
 
 
     const logger = winston.createLogger({
@@ -37,22 +35,11 @@ export default function App() {
     provider.addSpanProcessor(new SimpleSpanProcessor(jaegerExporter));
     const tracer = trace.getTracer('client-service');
 
-    const getContainerInfo = async () => {
-        const containerInfo = await docker.getContainer(process.env.HOSTNAME).inspect();
-        return {
-            containerId: containerInfo.Id,
-            containerName: containerInfo.Name,
-        };
-    };
-
 
     const handleSubmit = async () => {
-        const containerInfo = await getContainerInfo();
 
         const span = tracer.startSpan('Parse inputs');
         logger.info('Parsing inputs', {
-            containerId: containerInfo.containerId,
-            containerName: containerInfo.containerName,
             pid: process.pid,
         });
 
