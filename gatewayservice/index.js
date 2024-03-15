@@ -3,6 +3,7 @@ const { NodeTracerProvider } = require('@opentelemetry/node');
 const { SimpleSpanProcessor } = require('@opentelemetry/tracing');
 const { ConsoleSpanExporter } = require('@opentelemetry/tracing');
 const winston = require('winston'); const express = require("express");
+const { JaegerExporter } = require('@opentelemetry/exporter-jaeger');
 const os = require('os');
 const axios = require("axios");
 const app = express();
@@ -36,7 +37,7 @@ app.post("/forward", async (req, res) => {
     const { param, ...rest } = req.body;
     const span = tracer.startSpan('forward request');
     logger.info('handling forward request', {
-        req.body,
+        reqBody: req.body,
         hostname: os.hostname(),
         pid: process.pid,
     });

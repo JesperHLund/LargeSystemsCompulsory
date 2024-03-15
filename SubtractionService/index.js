@@ -3,6 +3,7 @@ const { NodeTracerProvider } = require('@opentelemetry/node');
 const { SimpleSpanProcessor } = require('@opentelemetry/tracing');
 const { ConsoleSpanExporter } = require('@opentelemetry/tracing');
 const winston = require('winston'); const express = require("express");
+const { JaegerExporter } = require('@opentelemetry/exporter-jaeger');
 const os = require('os');
 const axios = require("axios");
 const app = express();
@@ -40,7 +41,7 @@ app.post("/subtract", async (req, res) => {
     const { numberOne, numberTwo } = req.body;
     const span = tracer.startSpan('do subtraction');
     logger.info('handling subtraction', {
-        req.body,
+        reqBody: req.body,
         hostname: os.hostname(),
         pid: process.pid,
     });

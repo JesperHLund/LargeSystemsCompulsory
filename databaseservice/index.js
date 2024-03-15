@@ -3,6 +3,7 @@ const { NodeTracerProvider } = require('@opentelemetry/node');
 const { SimpleSpanProcessor } = require('@opentelemetry/tracing');
 const { ConsoleSpanExporter } = require('@opentelemetry/tracing');
 const winston = require('winston'); const express = require("express");
+const { JaegerExporter } = require('@opentelemetry/exporter-jaeger');
 const os = require('os');
 const axios = require("axios");
 const app = express();
@@ -46,7 +47,7 @@ app.post("/add", async (req, res) => {
 
     const span = tracer.startSpan('save to database');
     logger.info('handling save to database', {
-        req.body,
+        reqBody: req.body,
         hostname: os.hostname(),
         pid: process.pid,
     });

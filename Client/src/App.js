@@ -6,7 +6,7 @@ export default function App() {
   const { NodeTracerProvider } = require('@opentelemetry/node');
   const { SimpleSpanProcessor } = require('@opentelemetry/tracing');
   const { ConsoleSpanExporter } = require('@opentelemetry/tracing');
-  const { JaegerExporter } = require('@opentelemetry/exporter-jaeger');
+    const { JaegerExporter } = require('@opentelemetry/exporter-jaeger');
   const os = require('os');
   const winston = require('winston');
   const [numberOne, setNumberOne] = useState();

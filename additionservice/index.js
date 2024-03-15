@@ -46,7 +46,7 @@ app.post("/add", async (req, res) => {
     const span = tracer.startSpan('do addition');
 
     logger.info('Doing addition', {
-        req.body,
+        reqBody: req.body,
         hostname: os.hostname(),
         pid: process.pid,
     });
