@@ -18,7 +18,7 @@ const logger = winston.createLogger({
     format: winston.format.json(),
     defaultMeta: { service: 'gateway-service' },
     transports: [
-        new winston.transports.console(),
+        new winston.transports.Console(),
     ],
 });
 

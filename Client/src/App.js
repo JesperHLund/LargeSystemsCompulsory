@@ -20,7 +20,7 @@ export default function App() {
         format: winston.format.json(),
         defaultMeta: { service: 'client-service' },
         transports: [
-            new winston.transports.console(),
+            new winston.transports.Console(),
         ],
     });
 

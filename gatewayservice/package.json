@@ -17,5 +17,8 @@
     "express": "^4.18.3",
     "winston": "^3.12.0"
   },
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "eslint": "^8.57.0"
+  }
 }

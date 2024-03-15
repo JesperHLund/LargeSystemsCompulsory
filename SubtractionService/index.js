@@ -18,7 +18,7 @@ const logger = winston.createLogger({
     format: winston.format.json(),
     defaultMeta: { service: 'subtraction-service' },
     transports: [
-        new winston.transports.console(),
+        new winston.transports.Console(),
     ],
 });
 

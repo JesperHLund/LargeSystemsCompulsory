@@ -20,7 +20,7 @@ const logger = winston.createLogger({
     format: winston.format.json(),
     defaultMeta: { service: 'database-service' },
     transports: [
-        new winston.transports.console(),
+        new winston.transports.Console(),
     ],
 });
 
@@ -73,7 +73,7 @@ app.post("/subtract", async (req, res) => {
 
     const span = tracer.startSpan('save to database');
     logger.info('handling save to database', {
-        req.body,
+        reqBody: req.body,
         hostname: os.hostname(),
         pid: process.pid,
     });
