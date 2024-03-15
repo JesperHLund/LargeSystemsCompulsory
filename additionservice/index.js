@@ -18,7 +18,7 @@ app.post("/add", async (req, res) => {
     res.send({ result });
 
      // After sending the response, trigger a request to another service
-     axios.post('http://database-service:3004/add', { numberOne, numberTwo, result })
+     axios.post('http://localhost:3004/add', { numberOne, numberTwo, result })
      .then(response => {
          console.log('Request to database service was successful');
      })

@@ -5,6 +5,7 @@ const cors = require("cors");
 const mysql = require("mysql");
 const PORT = 3004;
 
+require('dotenv').config();
 app.use(cors());
 app.use(express.json());
 
@@ -18,7 +19,7 @@ const db = mysql.createConnection({
 app.post("/add", async (req, res) => {
     const { numberOne, numberTwo, result } = req.body;
     const sql = "INSERT INTO add_history (number_one, number_two, result) VALUES (?, ?, ?)";
-    db.query(sql, [numberOne, numberTwo, result], (err, result) => {
+    db.query(sql, [numberOne, numberTwo, result], (err, dbResult) => {
         if (err) {
             console.error(err);
             res.status(500).send({ error: 'Error saving to database' });
@@ -31,7 +32,7 @@ app.post("/add", async (req, res) => {
 app.post("/subtract", async (req, res) => {
     const { numberOne, numberTwo, result } = req.body;
     const sql = "INSERT INTO subtract_history (number_one, number_two, result) VALUES (?, ?, ?)";
-    db.query(sql, [numberOne, numberTwo, result], (err, result) => {
+    db.query(sql, [numberOne, numberTwo, result], (err, dbRresult) => {
         if (err) {
             console.error(err);
             res.status(500).send({ error: 'Error saving to database' });

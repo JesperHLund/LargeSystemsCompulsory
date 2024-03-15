@@ -1,12 +1,12 @@
-import "./App.css";
 import { useState } from "react";
+import "./App.css";
 
 export default function App() {
   const [numberOne, setNumberOne] = useState();
   const [numberTwo, setNumberTwo] = useState();
-  const [operation, setOperation] = useState();
+  const [operation, setOperation] = useState("");
   const [result, setResult] = useState("");
-  const host = "http://gateway-service:3001";
+  const host = "http://localhost:3001";
 
   const handleSubmit = async () => {
     try {
@@ -17,8 +17,8 @@ export default function App() {
         },
         body: JSON.stringify({
           param: operation,
-          numberOne: numberOne,
-          numberTwo: numberTwo,
+          numberOne: Number(numberOne),
+          numberTwo: Number(numberTwo),
         }),
       })
         .then((response) => response.json())

@@ -12,19 +12,22 @@ app.post("/forward", async (req, res) => {
 
     let url;
     if (param === 'add') {
-        url = 'http://add-service:3003/add';
+        url = 'http://localhost:3003/add';
     } else if (param === 'subtract') {
-        url = 'http://subtract-service:3002/subtract';
+        url = 'http://localhost:3002/subtract';
     } else {
         res.status(400).send({ error: 'Invalid parameter' });
         return;
     }
 
     try {
+        console.log("Rest in gateway service:", rest);
         const response = await axios.post(url, rest);
-        res.send(response.data.result);
+        console.log("Response in gateway service:", response.data.result)
+        res.send({result: response.data.result});
     } catch (error) {
-        res.status(500).send({ error: 'Error forwarding request' });
+        
+        res.status(500).send({ error: "Wagwan brudda, something went wrong!"});
     }
 }); 
 
