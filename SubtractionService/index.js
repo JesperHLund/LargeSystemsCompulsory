@@ -52,7 +52,7 @@ app.post("/subtract", async (req, res) => {
 
     // After sending the response, trigger a request to another service
     axios
-      .post("http://localhost:3004/subtract", { numberOne, numberTwo, result })
+      .post("http://database-service/subtract", { numberOne, numberTwo, result })
       .then((response) => {
         console.log("Request to database service was successful");
       })
