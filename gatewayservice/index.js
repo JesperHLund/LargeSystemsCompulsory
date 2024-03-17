@@ -46,9 +46,9 @@ app.post("/forward", async (req, res) => {
 
     let url;
     if (param === 'add') {
-        url = 'http://localhost:3003/add';
+        url = 'http://addition-service:3003/add';
     } else if (param === 'subtract') {
-        url = 'http://localhost:3002/subtract';
+        url = 'http://subtraction-service:3002/subtract';
     } else {
         res.status(400).send({ error: 'Invalid parameter' });
         return;
