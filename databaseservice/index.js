@@ -23,6 +23,11 @@ const logger = winston.createLogger({
     ],
 });
 
+console.log(process.env.DB_USER);
+console.log(process.env.DB_PASSWORD);
+console.log(process.env.DB_HOST);
+console.log(process.env.DB_NAME);
+
 const jaegerExporter = new JaegerExporter({
     serviceName: 'database-service', // Replace with your service name
     host: 'jaeger', // Jaeger service defined in Docker Compose
@@ -40,15 +45,23 @@ const tracer = trace.getTracer('database-service');
         host: process.env.DB_HOST,
         password: process.env.DB_PASSWORD,
         database: process.env.DB_NAME
+
     })
 
     app.post("/add", async (req, res) => {
         const { numberOne, numberTwo, result } = req.body;
+        console.log(process.env.DB_USER);
+        console.log(process.env.DB_PASSWORD);
+        console.log(process.env.DB_HOST);
+        console.log(process.env.DB_NAME);
 
         const span = tracer.startSpan('save to database');
         logger.info('handling save to database', {
             reqBody: req.body,
             pid: process.pid,
+            spanId: span.spanContext().spanId,
+            traceId: span.spanContext().traceId,
+            parentId: span.parentSpanId,
         });
 
 
@@ -74,6 +87,9 @@ const tracer = trace.getTracer('database-service');
         logger.info('handling save to database', {
             reqBody: req.body,
             pid: process.pid,
+            spanId: span.spanContext().spanId,
+            traceId: span.spanContext().traceId,
+            parentId: span.parentSpanId,
         });
 
         const sql = "INSERT INTO subtract_history (number_one, number_two, result) VALUES (?, ?, ?)";

@@ -47,6 +47,9 @@ app.post("/add", async (req, res) => {
     logger.info('Doing addition', {
         reqBody: req.body,
         pid: process.pid,
+        spanId: span.spanContext().spanId,
+        traceId: span.spanContext().traceId,
+        parentId: span.parentSpanId,
     });
     try {
   if (numberOne && numberTwo) {

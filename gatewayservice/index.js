@@ -42,6 +42,9 @@ app.post("/forward", async (req, res) => {
     logger.info('handling forward request', {
         reqBody: req.body,
         pid: process.pid,
+        spanId: span.spanContext().spanId,
+        traceId: span.spanContext().traceId,
+        parentId: span.parentSpanId,
     });
 
     let url;

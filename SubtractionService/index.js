@@ -43,6 +43,9 @@ app.post("/subtract", async (req, res) => {
     logger.info('handling subtraction', {
         reqBody: req.body,
         pid: process.pid,
+        spanId: span.spanContext().spanId,
+        traceId: span.spanContext().traceId,
+        parentId: span.parentSpanId,
     });
 
     try {
