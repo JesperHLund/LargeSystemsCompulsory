@@ -1,10 +1,9 @@
-import { nodeProfilingIntegration } from "@sentry/profiling-node";
-
 const { trace } = require("@opentelemetry/api");
 const { NodeTracerProvider } = require("@opentelemetry/node");
 const { SimpleSpanProcessor } = require("@opentelemetry/tracing");
 const { ConsoleSpanExporter } = require("@opentelemetry/tracing");
 const Sentry = require("@sentry/node");
+const Tracing = require("@sentry/tracing");
 const winston = require("winston");
 const express = require("express");
 const { JaegerExporter } = require("@opentelemetry/exporter-jaeger");
@@ -19,13 +18,9 @@ Sentry.init({
     // enable HTTP calls tracing
     new Sentry.Integrations.Http({ tracing: true }),
     // enable Express.js middleware tracing
-    new Sentry.Integrations.Express({ app }),
-    nodeProfilingIntegration(),
+    new Tracing.Integrations.Express({ app }),
   ],
-  // Performance Monitoring
   tracesSampleRate: 1.0, //  Capture 100% of the transactions
-  // Set sampling rate for profiling - this is relative to tracesSampleRate
-  profilesSampleRate: 1.0,
 });
 
 // The request handler must be the first middleware on the app
@@ -33,6 +28,7 @@ app.use(Sentry.Handlers.requestHandler());
 
 // TracingHandler creates a trace for every incoming request
 app.use(Sentry.Handlers.tracingHandler());
+
 app.use(cors());
 app.use(express.json());
 
@@ -53,6 +49,10 @@ const provider = new NodeTracerProvider();
 provider.register();
 provider.addSpanProcessor(new SimpleSpanProcessor(jaegerExporter));
 const tracer = trace.getTracer("gateway-service");
+
+app.get("/debug-sentry", function mainHandler(req, res) {
+    throw new Error("My first Sentry error!");
+  });
 
 app.post("/forward", async (req, res) => {
   const { param, ...rest } = req.body;
@@ -90,6 +90,7 @@ app.post("/forward", async (req, res) => {
   }
   span.end();
 });
+
 app.use(Sentry.Handlers.errorHandler());
 
 app.listen(PORT, () => {
