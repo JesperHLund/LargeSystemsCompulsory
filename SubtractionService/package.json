@@ -12,6 +12,8 @@
     "@opentelemetry/exporter-jaeger": "^1.22.0",
     "@opentelemetry/node": "^0.24.0",
     "@opentelemetry/tracing": "^0.24.0",
+    "@sentry/node": "^7.108.0",
+    "@sentry/profiling-node": "^7.108.0",
     "axios": "^1.6.7",
     "cors": "^2.8.5",
     "express": "^4.18.3",
