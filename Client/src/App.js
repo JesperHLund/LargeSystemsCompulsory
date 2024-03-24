@@ -1,15 +1,7 @@
 import { useState, useEffect } from "react";
-import * as Sentry from "@sentry/react";
-import { BrowserTracing } from "@sentry/react/integrations";
 import "./App.css";
 
-Sentry.init({
-  dsn: "https://95d587b639c3b8084a5cde95eea98d98@o4506960048881664.ingest.us.sentry.io/4506960050585600",
-  integrations: [new BrowserTracing()],
-  tracesSampleRate: 1.0, //  Capture 100% of the transactions
-});
-
-function App() {
+export default function App() {
   useEffect(() => {
     fetch("http://localhost/history")
       .then((response) => response.json()) // parse the response as JSON
@@ -121,18 +113,3 @@ function App() {
     </div>
   );
 }
-export default Sentry.withProfiler(
-  Sentry.withErrorBoundary(App, {
-    fallback: ({ error, componentStack, resetError }) => (
-      <div>
-        <div>
-          You had an error in your application. Check the console for more info.
-        </div>
-        <div>{error.toString()}</div>
-        <div>{componentStack}</div>
-        <button onClick={resetError}>Click here to reset!</button>
-      </div>
-    ),
-  }),
-  { name: "App" }
-);
