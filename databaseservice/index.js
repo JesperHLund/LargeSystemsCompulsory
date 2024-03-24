@@ -2,6 +2,7 @@ const { trace } = require("@opentelemetry/api");
 const { NodeTracerProvider } = require("@opentelemetry/node");
 const { SimpleSpanProcessor } = require("@opentelemetry/tracing");
 const Sentry = require("@sentry/node");
+const Tracing = require("@sentry/tracing");
 const winston = require("winston");
 const express = require("express");
 const { JaegerExporter } = require("@opentelemetry/exporter-jaeger");
