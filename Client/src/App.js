@@ -76,7 +76,7 @@ function App() {
       <div className="result">
         <h2>Result: {result}</h2>
       </div>
-      <div>
+      <div className="tableContainer">
         <h2>Add History</h2>
         <table>
           <thead>
@@ -97,7 +97,7 @@ function App() {
           </tbody>
         </table>
       </div>
-      <div>
+      <div className="tableContainer">
         <h2>Subtract History</h2>
         <table>
           <thead>
