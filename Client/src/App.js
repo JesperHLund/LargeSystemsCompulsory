@@ -6,11 +6,13 @@ export default function App() {
     fetch("http://localhost/history")
       .then((response) => response.json()) // parse the response as JSON
       .then((data) => console.log(data))
-      .then((data) => setHistory(data)) // log the parsed response
+      .then((data) => setAddHistory(data.addResult))
+      .then((data) => setSubtractHistory(data.subtractResult)) // log the parsed response
       .catch((error) => console.error("Error:", error)); // log any error that occurred
   }, []);
 
-  const [history, setHistory] = useState({ addResult: [], subtractResult: [] });
+  const [addHistory, setAddHistory] = useState([]);
+  const [subtractHistory, setSubtractHistory] = useState([]);
   const [numberOne, setNumberOne] = useState();
   const [numberTwo, setNumberTwo] = useState();
   const [operation, setOperation] = useState("");
@@ -79,7 +81,7 @@ export default function App() {
             </tr>
           </thead>
           <tbody>
-            {history.addResult.map((item) => (
+            {addHistory.map((item) => (
               <tr key={item.id}>
                 <td>{item.number_one}</td>
                 <td>{item.number_two}</td>
@@ -100,7 +102,7 @@ export default function App() {
             </tr>
           </thead>
           <tbody>
-            {history.subtractResult.map((item) => (
+            {subtractHistory.map((item) => (
               <tr key={item.id}>
                 <td>{item.number_one}</td>
                 <td>{item.number_two}</td>
