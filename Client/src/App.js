@@ -13,10 +13,12 @@ function App() {
   useEffect(() => {
     fetch("http://localhost/history")
       .then((response) => response.json()) // parse the response as JSON
-      .then((data) => console.log(data)) // log the parsed response
+      .then((data) => console.log(data))
+      .then((data) => setHistory(data)) // log the parsed response
       .catch((error) => console.error("Error:", error)); // log any error that occurred
   }, []);
 
+  const [history, setHistory] = useState({ addResult: [], subtractResult: [] });
   const [numberOne, setNumberOne] = useState();
   const [numberTwo, setNumberTwo] = useState();
   const [operation, setOperation] = useState("");
@@ -73,6 +75,48 @@ function App() {
       </div>
       <div className="result">
         <h2>Result: {result}</h2>
+      </div>
+      <div>
+        <h2>Add History</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Number One</th>
+              <th>Number Two</th>
+              <th>Result</th>
+            </tr>
+          </thead>
+          <tbody>
+            {history.addResult.map((item) => (
+              <tr key={item.id}>
+                <td>{item.number_one}</td>
+                <td>{item.number_two}</td>
+                <td>{item.result}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <h2>Subtract History</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Number One</th>
+              <th>Number Two</th>
+              <th>Result</th>
+            </tr>
+          </thead>
+          <tbody>
+            {history.subtractResult.map((item) => (
+              <tr key={item.id}>
+                <td>{item.number_one}</td>
+                <td>{item.number_two}</td>
+                <td>{item.result}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
