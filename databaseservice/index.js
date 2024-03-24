@@ -53,67 +53,100 @@ provider.addSpanProcessor(new SimpleSpanProcessor(jaegerExporter));
 const tracer = trace.getTracer("database-service");
 
 const db = mysql.createConnection({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+});
+
+app.post("/add", async (req, res) => {
+  const { numberOne, numberTwo, result } = req.body;
+
+  const transaction = Sentry.startTransaction({
+    op: "task",
+    name: "save to database",
   });
-  
-  app.post("/add", async (req, res) => {
-    const { numberOne, numberTwo, result } = req.body;
-  
-    const transaction = Sentry.startTransaction({
-      op: "task",
-      name: "save to database",
-    });
-  
-    Sentry.configureScope((scope) => {
-      scope.setSpan(transaction);
-    });
-  
-    const sql =
-      "INSERT INTO add_history (number_one, number_two, result) VALUES (?, ?, ?)";
-    db.query(sql, [numberOne, numberTwo, result], (err, dbResult) => {
-      if (err) {
-        console.error(err);
-        Sentry.captureException(err);
+
+  Sentry.configureScope((scope) => {
+    scope.setSpan(transaction);
+  });
+
+  const sql =
+    "INSERT INTO add_history (number_one, number_two, result) VALUES (?, ?, ?)";
+  db.query(sql, [numberOne, numberTwo, result], (err, dbResult) => {
+    if (err) {
+      console.error(err);
+      Sentry.captureException(err);
+      transaction.setStatus("error");
+      res.status(500).send({ error: "Error saving to database" });
+    } else {
+      res.send({ result });
+    }
+  });
+
+  transaction.finish();
+});
+
+app.post("/subtract", async (req, res) => {
+  const { numberOne, numberTwo, result } = req.body;
+
+  const transaction = Sentry.startTransaction({
+    op: "task",
+    name: "save to database",
+  });
+
+  Sentry.configureScope((scope) => {
+    scope.setSpan(transaction);
+  });
+
+  const sql =
+    "INSERT INTO subtract_history (number_one, number_two, result) VALUES (?, ?, ?)";
+  db.query(sql, [numberOne, numberTwo, result], (err, dbResult) => {
+    if (err) {
+      console.error(err);
+      Sentry.captureException(err);
+      transaction.setStatus("error");
+      res.status(500).send({ error: "Error saving to database" });
+    } else {
+      res.send({ result });
+    }
+  });
+
+  transaction.finish();
+});
+
+app.get("/history", (req, res) => {
+  const transaction = Sentry.startTransaction({
+    op: "task",
+    name: "get history",
+  });
+
+  const addSql = "SELECT * FROM add_history ORDER BY id DESC LIMIT 10";
+  const subtractSql = "SELECT * FROM subtract_history ORDER BY id DESC LIMIT 10";
+
+  db.query(addSql, (addErr, addResult) => {
+    if (addErr) {
+      console.error(addErr);
+      Sentry.captureException(addErr);
+      transaction.setStatus("error");
+      res.status(500).send({ error: "Error querying add history" });
+      return;
+    }
+
+    db.query(subtractSql, (subtractErr, subtractResult) => {
+      if (subtractErr) {
+        console.error(subtractErr);
+        Sentry.captureException(subtractErr);
         transaction.setStatus("error");
-        res.status(500).send({ error: "Error saving to database" });
-      } else {
-        res.send({ result });
+        res.status(500).send({ error: "Error querying subtract history" });
+        return;
       }
+
+      res.json({ addResult, subtractResult });
+      transaction.finish();
     });
-  
-    transaction.finish();
   });
-  
-  app.post("/subtract", async (req, res) => {
-    const { numberOne, numberTwo, result } = req.body;
-  
-    const transaction = Sentry.startTransaction({
-      op: "task",
-      name: "save to database",
-    });
-  
-    Sentry.configureScope((scope) => {
-      scope.setSpan(transaction);
-    });
-  
-    const sql =
-      "INSERT INTO subtract_history (number_one, number_two, result) VALUES (?, ?, ?)";
-    db.query(sql, [numberOne, numberTwo, result], (err, dbResult) => {
-      if (err) {
-        console.error(err);
-        Sentry.captureException(err);
-        transaction.setStatus("error");
-        res.status(500).send({ error: "Error saving to database" });
-      } else {
-        res.send({ result });
-      }
-    });
-  
-    transaction.finish();
-  });
+});
 
 app.use(Sentry.Handlers.errorHandler());
 

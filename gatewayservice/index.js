@@ -1,7 +1,6 @@
 const { trace } = require("@opentelemetry/api");
 const { NodeTracerProvider } = require("@opentelemetry/node");
 const { SimpleSpanProcessor } = require("@opentelemetry/tracing");
-const { ConsoleSpanExporter } = require("@opentelemetry/tracing");
 const Sentry = require("@sentry/node");
 const Tracing = require("@sentry/tracing");
 const winston = require("winston");
@@ -51,8 +50,8 @@ provider.addSpanProcessor(new SimpleSpanProcessor(jaegerExporter));
 const tracer = trace.getTracer("gateway-service");
 
 app.get("/debug-sentry", function mainHandler(req, res) {
-    throw new Error("My first Sentry error!");
-  });
+  throw new Error("My first Sentry error!");
+});
 
 app.post("/forward", async (req, res) => {
   const { param, ...rest } = req.body;
@@ -89,6 +88,17 @@ app.post("/forward", async (req, res) => {
     res.status(500).send({ error: error.message });
   }
   span.end();
+});
+
+app.get("/history", async (req, res) => {
+  try {
+    const response = await axios.get("http://database-service:3004/history");
+    res.send(response.data);
+  } catch (error) {
+    Sentry.captureException(error);
+    logger.error("error handling request", error);
+    res.status(500).send({ error: error.message });
+  }
 });
 
 app.use(Sentry.Handlers.errorHandler());

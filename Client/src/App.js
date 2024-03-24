@@ -1,7 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 
 export default function App() {
+  useEffect(() => {
+    fetch("http://localhost/history")
+      .then((response) => response.json()) // parse the response as JSON
+      .then((data) => console.log(data)) // log the parsed response
+      .catch((error) => console.error("Error:", error)); // log any error that occurred
+  }, []);
+
   const [numberOne, setNumberOne] = useState();
   const [numberTwo, setNumberTwo] = useState();
   const [operation, setOperation] = useState("");
